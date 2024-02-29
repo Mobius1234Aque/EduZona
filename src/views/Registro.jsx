@@ -100,8 +100,7 @@ export function Registro() {
 
   const obtenerValoresPlantel = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/plantel");
-      console.log("Datos del plantel:", response.data);
+      const response = await axios.get("https://fast-dusk-08901-dd3e17a6f757.herokuapp.com/plantel");
       setPlantelOptions(response.data);
     } catch (error) {
       console.error("Error al obtener valores del plantel:", error);
@@ -109,8 +108,7 @@ export function Registro() {
   };
   const obtenerValoresSesion = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/sesiones");
-      console.log("Datos de sesiones:", response.data);
+      const response = await axios.get("https://fast-dusk-08901-dd3e17a6f757.herokuapp.com/sesiones");
       setSesionOptions(response.data);
     } catch (error) {
       console.error("Error al obtener valores de sesiones:", error);
@@ -120,9 +118,8 @@ export function Registro() {
   const obtenerValoresPreguntasSecretas = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/preguntas-secretas"
+        "https://fast-dusk-08901-dd3e17a6f757.herokuapp.com/preguntas-secretas"
       );
-      console.log("Datos de preguntas secretas:", response.data);
       setPreguntasSecretasOptions(response.data);
     } catch (error) {
       console.error("Error al obtener valores de preguntas secretas:", error);
@@ -160,31 +157,24 @@ export function Registro() {
             aPaterno: values.aPaterno,
             aMaterno: values.aMaterno,
             correo: values.correo,
-            telefono: values.telefono,
             pregunta: values.pregunta,
             respuesta: values.respuesta,
             contrasena: values.contrasena,
         };
 
         // Verificar si la CURP ya existe en la base de datos
-        const curpExists = await axios.post('http://localhost:3000/verificar-curp', { curp: values.curp });
+        const curpExists = await axios.post('https://fast-dusk-08901-dd3e17a6f757.herokuapp.com/verificar-curp', { curp: values.curp });
 
         if (curpExists.data.exists) {
             // Mostrar mensaje de error si la CURP ya existe
             message.error('La CURP ya se encuentra registrada');
-        } else {
-            // Verificar si el número de teléfono ya existe en la base de datos
-            const telefonoExists = await axios.post('http://localhost:3000/verificar-telefono', { telefono: values.telefono });
-            if (telefonoExists.data.exists) {
-                // Mostrar mensaje de error si el teléfono ya existe
-                message.error('El número de teléfono ya se encuentra registrado');
-            } else {
+        } 
                 // Ambos verificaciones pasaron, realizar la solicitud al servidor para insertar los datos
-                const response = await axios.post('http://localhost:3000/insertar-dato', dataToInsert);
+                const response = await axios.post('https://fast-dusk-08901-dd3e17a6f757.herokuapp.com/insertar-dato', dataToInsert);
                 message.success('Registro exitoso');
                 navigate('/');
-            }
-        }
+           
+        
     } catch (error) {
         console.error('Error al insertar datos en la base de datos:', error);
         message.error('Error al realizar el registro. Por favor, inténtalo de nuevo.');
@@ -436,37 +426,7 @@ export function Registro() {
               <Input prefix={<UserOutlined />} placeholder="ejemplo@gmail.com" />
             </Form.Item>
 
-            <Contenido conTit={"Teléfono:"} />
-            <Form.Item
-              name="telefono"
-              rules={[
-                {
-                  required: true,
-                  message: (
-                    <Notificacion
-                      noti={
-                        "Ingrese el número de teléfono del personal a registrar"
-                      }
-                    />
-                  ),
-                },
-                {
-                  pattern: /^[0-9]{10}$/,
-                  message: (
-                    <Notificacion
-                      noti={
-                        "El número de teléfono debe contener exactamente 10 números"
-                      }
-                    />
-                  ),
-                },
-              ]}
-            >
-              <Input
-                prefix={<PhoneOutlined />}
-                placeholder="Ejemplo: 7711334455"
-              />
-            </Form.Item>
+            
 
             <Contenido conTit={"Pregunta secreta:"} />
             <Form.Item
@@ -622,7 +582,7 @@ export function Registro() {
             </Form.Item>
 
             <Form.Item>
-              <Button type="primary" htmlType="submit" disabled={!checked || !formValues.curp || !formValues.plantel || !formValues.sesion || !formValues.nombre || !formValues.aPaterno || !formValues.aMaterno || !formValues.telefono || !formValues.pregunta || !formValues.respuesta || !formValues.contra || !formValues.terms || !formValues.correo}>
+              <Button type="primary" htmlType="submit" disabled={!checked || !formValues.curp || !formValues.plantel || !formValues.sesion || !formValues.nombre || !formValues.aPaterno || !formValues.aMaterno || !formValues.pregunta || !formValues.respuesta || !formValues.contra || !formValues.terms || !formValues.correo}>
                 Registrar
               </Button>
             </Form.Item>

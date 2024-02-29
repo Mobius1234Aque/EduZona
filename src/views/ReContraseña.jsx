@@ -23,39 +23,41 @@ export function ReContraseña() {
   const onFinish = async (values) => {
     try {
       const curpExistsResponse = await axios.post(
-        "http://localhost:3000/verificar-curp",
+        "https://fast-dusk-08901-dd3e17a6f757.herokuapp.com/verificar-curp",
         {
           curp: values.curp,
         }
       );
-
+  
       const curpExists = curpExistsResponse.data.exists;
-
+      const usuarioDeBaja = curpExistsResponse.data.usuarioDeBaja;
+  
       if (curpExists) {
-        console.log("Datos correctos");
-        message.success("Datos correctos");
-        navigate("/Re2Contraseña", {
-          state: {
-            curp: values.curp,
-          },
-        });
+        if (usuarioDeBaja) {
+          message.error("El usuario está dado de baja");
+        } else {
+          message.success("Datos correctos");
+          navigate("/Re2Contraseña", {
+            state: {
+              curp: values.curp,
+            },
+          });
+        }
       } else {
         message.error("La CURP no está registrada");
       }
     } catch (error) {
       console.error("Error al verificar existencia:", error);
-
+  
       if (error.response) {
         console.error("Respuesta del servidor:", error.response.data);
-        message.error(
-          "Error en la respuesta del servidor. Por favor, inténtalo de nuevo."
-        );
+        message.error("Error. Por favor, inténtalo de nuevo.");
       } else {
         message.error("Error inesperado. Por favor, inténtalo de nuevo.");
       }
     }
   };
-
+  
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
     message.error("Por favor, completa todos los campos.");

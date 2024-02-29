@@ -21,19 +21,27 @@ export function AdminSol() {
     useEffect(() => {
         obtenerRegistros();
     }, []);
-
+    const plantelTextos = {
+        1: 'Zona 012',
+        2: 'Benito Juárez',
+        3: 'Héroe Agustín'
+    };
+    
+    const sesionTextos = {
+    1:'Supervisor',
+2:'Director',
+3:'Maestro'
+};
     const obtenerRegistros = async () => {
         try {
-            const response = await axios.get("http://localhost:3000/registroSol");
-            console.log("Datos de registros:", response.data);
+            const response = await axios.get("https://fast-dusk-08901-dd3e17a6f757.herokuapp.com/registroSol");
             setRegistros(response.data);
             setLoading(false); // Marca la carga como completa una vez que se reciben los datos
         } catch (error) {
-            console.error("Error al obtener registros:", error);
             message.error("Error al obtener registros");
         }
     };
-
+ 
 
     const handleAceptar = async (record) => {
         confirm({
@@ -45,14 +53,13 @@ export function AdminSol() {
             async onOk() {
                 try {
                     // Aquí puedes hacer la consulta dependiendo de la CURP
-                    const respuesta = await axios.get(`http://localhost:3000/registroSolAcep?curp=${record.curp}`);
+                    const respuesta = await axios.get(`https://fast-dusk-08901-dd3e17a6f757.herokuapp.com/registroSolAcep?curp=${record.curp}`);
                     const datos = respuesta.data;
 
 
                     message.success("La solicitud ha sido aceptada con éxito.");
                     obtenerRegistros();
                 } catch (error) {
-                    console.error("Error al aceptar la solicitud:", error);
                     message.error("Error al aceptar la solicitud");
                 }
             },
@@ -75,14 +82,13 @@ export function AdminSol() {
             async onOk() {
                 try {
                     // Aquí puedes hacer la consulta dependiendo de la CURP
-                    const respuesta = await axios.get(`http://localhost:3000/registroSolCan?curp=${record.curp}`);
+                    const respuesta = await axios.get(`https://fast-dusk-08901-dd3e17a6f757.herokuapp.com/registroSolCan?curp=${record.curp}`);
                     const datos = respuesta.data;
 
 
                     message.success("La solicitud ha sido rechazada con éxito. ");
                     obtenerRegistros();
                 } catch (error) {
-                    console.error("Error al rechazar la solicitud:", error);
                     message.error("Error al rechazar la solicitud");
                 }
             },
@@ -107,6 +113,7 @@ export function AdminSol() {
             title: "Sesión",
             dataIndex: "sesion",
             key: "sesion",
+           
         },
         {
             title: "Nombre",
@@ -122,11 +129,6 @@ export function AdminSol() {
             title: "Apellido M",
             dataIndex: "aMaterno",
             key: "aMaterno",
-        },
-        {
-            title: "Correo",
-            dataIndex: "correo",
-            key: "correo",
         },
         {
             title: "  Solicitud",

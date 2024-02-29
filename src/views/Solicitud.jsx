@@ -12,6 +12,7 @@ import { Subtitulo, Notificacion, Contenido } from "../components/Titulos";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { CSPMetaTag } from "../components/CSPMetaTag";
+import CryptoJS from 'crypto-js';
 
 const { Option } = Select;
 
@@ -29,8 +30,7 @@ export function Solicitud() {
 
   const obtenerValoresPlantel = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/plantel");
-      console.log("Datos del plantel:", response.data);
+      const response = await axios.get("https://fast-dusk-08901-dd3e17a6f757.herokuapp.com/api/plantel");
       setPlantelOptions(response.data);
     } catch (error) {
       console.error("Error al obtener valores del plantel:", error);
@@ -38,8 +38,7 @@ export function Solicitud() {
   };
   const obtenerValoresSesion = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/sesiones");
-      console.log("Datos de sesiones:", response.data);
+      const response = await axios.get("https://fast-dusk-08901-dd3e17a6f757.herokuapp.com/api/sesiones");
       setSesionOptions(response.data);
     } catch (error) {
       console.error("Error al obtener valores de sesiones:", error);
@@ -49,9 +48,9 @@ export function Solicitud() {
   const obtenerValoresPreguntasSecretas = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/preguntas-secretas"
+        "https://fast-dusk-08901-dd3e17a6f757.herokuapp.com/preguntas-secretas"
       );
-      console.log("Datos de preguntas secretas:", response.data);
+   
       setPreguntasSecretasOptions(response.data);
     } catch (error) {
       console.error("Error al obtener valores de preguntas secretas:", error);
@@ -75,6 +74,7 @@ export function Solicitud() {
 
   const onFinish = async (values) => {
     try {
+   
       const dataToInsert = {
         curp: values.curp,
         plantel: values.plantel,
@@ -84,18 +84,19 @@ export function Solicitud() {
         aMaterno: values.aMaterno,
         correo: values.correo
       };
+
   
       // Verificar si la CURP ya existe en la base de datos (primera verificación)
-      const curpExistsInSoli = await axios.post('http://localhost:3000/verificar-curpSoli', { curp: values.curp });
+      const curpExistsInSoli = await axios.post('https://fast-dusk-08901-dd3e17a6f757.herokuapp.com/verificar-curpSoli', { curp: values.curp });
   
       // Verificar si la CURP ya existe en otra ruta (segunda verificación)
-      const curpExists = await axios.post('http://localhost:3000/verificar-curp', { curp: values.curp });
+      const curpExists = await axios.post('https://fast-dusk-08901-dd3e17a6f757.herokuapp.com/verificar-curp', { curp: values.curp });
   
       // Verificar si el correo ya existe en la tabla de registros (tercera verificación)
-      const correoExists = await axios.post('http://localhost:3000/verificar-correo', { correo: values.correo });
+      const correoExists = await axios.post('https://fast-dusk-08901-dd3e17a6f757.herokuapp.com/verificar-correo', { correo: values.correo });
   
       // Verificar si el correo ya existe en la tabla de registrosoli (cuarta verificación)
-      const correoExistsInSoli = await axios.post('http://localhost:3000/verificar-correoSoli', { correo: values.correo });
+      const correoExistsInSoli = await axios.post('https://fast-dusk-08901-dd3e17a6f757.herokuapp.com/verificar-correoSoli', { correo: values.correo });
   
       if (curpExistsInSoli.data.exists) {
         // Mostrar mensaje de error si la CURP ya existe en la solicitud
@@ -111,7 +112,7 @@ export function Solicitud() {
         message.error('El correo ya está asociado a una solicitud existente.');
       } else {
         // Todas las verificaciones pasaron, realizar la solicitud al servidor para insertar los datos
-        const response = await axios.post('http://localhost:3000/insertar-solicitud', dataToInsert);
+        const response = await axios.post('https://fast-dusk-08901-dd3e17a6f757.herokuapp.com/insertar-solicitud', dataToInsert);
         message.success('Solicitud enviada. Se le notificará a través del correo proporcionado sobre la aceptación o rechazo de la misma.');
         navigate('/');
       }
